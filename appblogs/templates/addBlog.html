@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .btns{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn{
+            width: 100% !important;
+            border-radius: 0px !important;
+        }
+
+        .btn:nth-child(1){
+            border-radius: 10px 0px 0px 10px !important;
+        }
+
+        .btn:nth-child(3){
+            border-radius: 0px 10px 10px 0px !important;
+        }
+        .tema-box{
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="container-fluid bg bg-primary">
+        <div class="container">
+            <h3 class="fs-2 py-5 text-light"><i class="bi bi-clipboard2-fill"></i> {{ title }}</h3>
+        </div>
+    </div>
+    <div class="container d-flex align-items-center justify-content-center">
+        {% if UID %}
+            <form id="formAdd" class="form-control w-100" action="{% url 'AddBlog' UID %}" method="post">
+        {% else %}
+            <form id="formAdd" class="form-control w-100" action="{% url 'AddBlog' %}" method="post">
+        {% endif %}
+            {% csrf_token %}
+            {{form.as_p}}
+            <div class="w-100 btns">
+                <button type="submit" class="btn btn-primary">CRIAR</button>
+                <button type="reset" class="btn btn-warning text-light">RESETAR</button>
+                <a href="{% url 'Home' %}" class="btn btn-danger">CANCELAR</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block page_script %}
+    <script>
+        let cores = ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "body", "muted", "white"];
+        let form = document.querySelector("#formAdd");
+        form.querySelectorAll("p").forEach(p => p.className = "mb-3");
+        form.querySelectorAll("label").forEach(p => p.className = "form-label fs-4");
+        form.querySelectorAll("input").forEach(input => input.className = "form-control");
+        form.querySelectorAll("textarea").forEach(ta => {ta.className = "form-control"; ta.style.resize = "none";});
+
+        let tema = document.getElementById("id_tema");
+        tema.hidden = true;
+        let coresdiv = document.createElement("div");
+        coresdiv.className = "mx-auto w-75 d-flex align-items-center justify-content-between";
+        cores.forEach(cor => {
+            let div = document.createElement("div");
+            div.className = "tema-box border bg bg-"+cor;
+            div.addEventListener("click", () => {
+                coresdiv.childNodes.forEach(c => {c.style.boxShadow = "none"; });
+                div.style.boxShadow = "0 0 15px green";
+                tema.value = cor;
+            });
+            coresdiv.appendChild(div);
+        });
+        tema.parentElement.appendChild(coresdiv);
+    </script>
+{% endblock %}

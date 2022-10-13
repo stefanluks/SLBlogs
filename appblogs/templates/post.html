@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .linha{
+            width: 100%;
+            height: 1px;
+            background-color: rgb(180, 180, 180);
+            margin: 8px 0px;
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-light">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Exluir {{post.titulo}}?</h1>
+                <button type="button" class="btn-close text-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body bg bg-opacity-50 bg-dark text-light m-0 py-2">
+                    Tem certeza que deseja exluir o post {{post.titulo}}? possui {{post.GetQtdLikes}} likes e {{post.GetQtdComents}} comentários.
+                </div>
+                <div class="modal-footer bg bg-opacity-50 bg-dark">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cancelar</button>
+                <a href="{% url 'ExcluirPost' post.UID %}" type="button" class="btn btn-warning">EXCLUIR</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="container-fluid bg bg-primary">
+    <div class="container py-3 d-flex flex-wrap align-items-center justify-content-between">
+        <div class="w-75 d-flex flex-column">
+            <h3 class="fs-1 text-light">{{post.titulo}}</h3>
+            <p class="text-light w-75">{{post.resumo}}</p>
+        </div>
+        {% if request.user == post.blog.dono %}
+            <div class="w-25 d-flex flex-column">
+                <a href="{% url 'AddPost' post.blog.UID post.UID %}" class="w-100 my-1 btn btn-light">Editar</a>
+                <a href="{% url 'LikePost' post.UID %}" class="w-100 my-1 btn btn-light">
+                    {% if curtiu %}
+                        <i class="bi bi-star-fill"> Descurtir</i>
+                    {% else %}
+                        <i class="bi bi-star"> Curtir</i>
+                    {% endif %}
+                </a>
+                {% if post.publicado %}
+                    <a href="{% url 'PublicarView' post.UID %}" class="w-100 my-1 btn btn-light">Despublicar</a>
+                {% else %}
+                    <a href="{% url 'PublicarView' post.UID %}" class="w-100 my-1 btn btn-light">Publicar</a>
+                {% endif %}
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Excluir
+                </button>
+            </div>
+        {% else %}
+            <div class="w-25 d-flex flex-column">
+                <a href="{% url 'EditarPost' post.UID %}" class="w-100 my-1 btn btn-light">
+                    {% if not curtiu %}
+                        <i class="bi bi-star"> Descurtir</i>
+                    {% else %}
+                        <i class="bi bi-star-fill"> Curtir</i>
+                    {% endif %}
+                </a>
+                <a href="#comentarios" class="w-100 my-1 btn btn-light">Comentários</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<div class="container py-3">
+    {{ post.conteudo | safe }}
+</div>
+<div class="container-fluid bg bg-secondary">
+    <div class="container py-4">
+        <h3 class="fs-3 text-light">Comentários</h3>
+    </div>
+</div>
+<div class="container" id="comentarios">
+    {% for c in comentarios %}
+        <div class="card my-3">
+            <div class="card-header bg bg-secondary text-light">
+                @{{ c.coment.usuario.username }}
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ c.coment.conteudo }}</p>
+                <div class="linha"></div>
+                <a id="coment-{{c.coment.id}}" class="btnLike btn btn-primary">
+                    {% if c.curtido %}
+                        <i class="bi bi-star-fill"> {{c.coment.GetQtdLikes}}</i>
+                    {% else %}
+                        <i class="bi bi-star"> {{c.coment.GetQtdLikes}}</i>
+                    {% endif %}
+                </a>
+                <a href="#" class="btn btn-primary">
+                    <i class="bi bi-chat-left-text"> {{c.coment.GetQtdComents}}</i>
+                </a>
+                {% if c.coment.GetRespostas %}
+                    <div class="linha"></div>
+                    {% for r in c.coment.GetRespostas %}
+                        <div class="card my-3">
+                            <div class="card-header bg bg-secondary text-light">
+                                @{{ r.usuario.username }}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ r.conteudo }}</p>
+                                <!-- <div class="linha"></div> -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+{% block page_script %}
+<script>
+    let btns = document.querySelectorAll(".btnLike");
+    btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            let classe = btn.children[0].className;
+            let qtd = parseInt(btn.children[0].textContent);
+            
+            if(classe === "bi bi-star"){
+                btn.children[0].className = "bi bi-star-fill";
+                qtd++;
+            }else{
+                btn.children[0].className = "bi bi-star";
+                qtd--;
+            }
+            btn.children[0].textContent = " " + qtd;
+            let url = window.location.href.split("/Post/")[0]+"/LikeComent/"+(btn.id.split("-")[1]);
+            fetch(url).then();
+        });
+    });
+</script>
+{% endblock %}

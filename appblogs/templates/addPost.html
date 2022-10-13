@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .btns{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tema-box{
+            width: 50px;
+            height: 50px;
+        }
+        #titulo::placeholder{
+            color: rgb(192, 192, 192);
+        }
+        #titulo{
+            width: 70%;
+            font-size: 30px;
+            color: white;
+            background-color: transparent;
+            border: none;
+            user-select: none;
+        }
+        #resumo::placeholder{
+            color: rgb(192, 192, 192);
+        }
+        #resumo{
+            width: 70%;
+            font-size: 18px;
+            color: white;
+            background-color: transparent;
+            border: none;
+            user-select: none;
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    {% if UID %}
+        <form id="formAdd" class="form-control w-100" action="{% url 'AddPost' blog.UID UID %}" method="post">
+    {% else %}
+        <form id="formAdd" class="form-control w-100" action="{% url 'AddPost' blog.UID %}" method="post">
+    {% endif %}
+    {% csrf_token %}
+        <div class="container-fluid bg bg-primary d-flex align-items-center justify-content-around">
+            <div class="container d-flex align-items-center">
+                <h3 class="fs-2 py-5 w-75 text-light d-flex flex-column">
+                    <div class="w-100 d-flex align-items-center">
+                        <i class="bi bi-clipboard2-fill"></i>
+                        {% if edicao %}
+                            <input type="text" name="titulo" id="titulo" class="w-50 form-control" placeholder="Digite o titulo do post:" value="{{post.titulo}}">
+                        {% else %}
+                            <input type="text" name="titulo" id="titulo" class="w-50 form-control" placeholder="Digite o titulo do post:">
+                        {% endif %}
+                    </div>
+                    {% if edicao %}
+                        <input type="text" name="resumo" value="{{post.resumo}}" id="resumo" class="w-50 form-control" placeholder="Digite o resumo do post:">
+                    {% else %}
+                        <input type="text" name="resumo" id="resumo" class="w-50 form-control" placeholder="Digite o resumo do post:">
+                    {% endif %}
+                </h3>
+                <div class="w-25 mx-2 d-flex flex-column">
+                    <button type="submit" class="w-100 my-1 btn btn-light">Salvar</button>
+                    <a href="{% url 'Blog' blog.UID %}" class="w-100 my-1 btn btn-danger">Cancelar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container-fluid d-flex justify-content-between">
+            <div class="form-control py-2 my-1 w-50">
+                <label for="conteudo" class="form-label text-dark">Conteudo do Post [ HTML + bootstrap ]:</label>
+                <textarea class="my-2 form-control rounded" id="conteudo" name="conteudo" cols="30" rows="10" style="width: 100%; min-height: 600px; resize: none;">{% if edicao %}{{post.conteudo}}{% endif %}</textarea>
+            </div>
+            <div class="my-2 container w-50 d-flex flex-column">
+                <div id="btnAtualizar" class="btn btn-warning w-100"><i class="text-dark fs-5 bi bi-arrow-clockwise"> Atualizar</i></div>
+                <div id="visualizacao"></div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block page_script %}
+<script>
+    const conteudo = document.getElementById("conteudo");
+    const view = document.getElementById("visualizacao");
+    const btn = document.getElementById("btnAtualizar");
+    view.innerHTML = conteudo.value;
+    btn.addEventListener("click", () => {
+        view.innerHTML = conteudo.value;
+    });
+</script>
+{% endblock %}

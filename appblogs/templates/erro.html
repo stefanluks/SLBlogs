@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .erro{
+            font-size: calc(50vw/3);
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="container-fluid bg bg-primary">
+        <div class="container">
+            <h3 class="fs-2 py-5 text-light"><i class="bi bi-clipboard2-x-fill"></i> {{ msg }}</h3>
+        </div>
+    </div>
+    <div class="container d-flex align-items-center justify-content-center">
+        <i class="erro text-danger bi bi-clipboard2-x-fill">ERRO!</i>
+    </div>
+{% endblock %}
+{% block page_script %}
+{% endblock %}

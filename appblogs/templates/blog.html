@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .card{
+            transition: .5s !important;
+        }
+        .card:hover{
+            box-shadow: 0 0 10px green;
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="container-fluid bg bg-{{blog.tema}}">
+        <div class="container py-5 d-flex align-items-center justify-content-between">
+            <div class="w-75 d-flex flex-column">
+                <h3 class="fs-1 text-light">{{blog.nome}}</h3>
+                <p class="text-light fs-4">{{blog.descricao}}</p>
+            </div>
+            {% if request.user == blog.dono %}
+                <div class="w-25 d-flex flex-column">
+                    <a href="{% url 'AddBlog' blog.UID %}" class="w-100 my-1 btn btn-light">EDITAR</a>
+                    <a href="{% url 'AddPost' blog.UID %}" class="w-100 my-1 btn btn-light">Novo Post</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap">
+            {% for p in blog.posts.all %}
+                {% if request.user != blog.dono %}
+                    {% if p.publicado %}
+                        <a href="{% url 'Post' p.UID %}" class="card text-dark text-decoration-none m-2" style="width: 20rem; height: 180px;">
+                            <div class="card-header bg bg-{{blog.tema}} text-light">
+                                <b>{{ p.titulo }}</b>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text" style="text-align: justify; height: 75px; text-overflow: clip; overflow: hidden;">{{ p.resumo }}</p>
+                                <p class="card-text">
+                                    <i class="bi bi-star-fill mx-1"> {{p.GetQtdLikes}}</i>
+                                    <i class="bi bi-chat-dots mx-1"> {{p.GetQtdComents}}</i>
+                                    status: <b> {% if p.publicado %} publicado {% else %} salvo {% endif %} </b>
+                                </p>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'Post' p.UID %}" class="card text-dark text-decoration-none m-2" style="width: 20rem; height: 180px;">
+                        <div class="card-header bg bg-{{blog.tema}} text-light">
+                            <b>{{ p.titulo }}</b>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text" style="text-align: justify; height: 75px; text-overflow: clip; overflow: hidden;">{{ p.resumo }}</p>
+                            <p class="card-text">
+                                <i class="bi bi-star-fill mx-1"> {{p.GetQtdLikes}}</i>
+                                <i class="bi bi-chat-dots mx-1"> {{p.GetQtdComents}}</i>
+                                status: <b> {% if p.publicado %} publicado {% else %} salvo {% endif %} </b>
+                            </p>
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+{% endblock %}
+{% block page_script %}
+{% endblock %}

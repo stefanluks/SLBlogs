@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="container-fluid bg bg-primary">
+        <div class="container py-3 d-flex align-items-center justify-content-between">
+            <div class="w-75 d-flex flex-column">
+                <h3 class="fs-1 text-light">{{post.titulo}}</h3>
+            </div>
+            {% if request.user == post.blog.dono %}
+                <div class="w-25 d-flex flex-column">
+                    <div id="btnSalvar" class="w-100 my-1 btn btn-light">Salvar</div>
+                    {% if post.publicado %}
+                        <a href="{% url 'PublicarView' post.UID %}" class="w-100 my-1 btn btn-light">Despublicar</a>
+                    {% else %}
+                        <a href="{% url 'PublicarView' post.UID %}" class="w-100 my-1 btn btn-light">Publicar</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container-fluid d-flex justify-content-between">
+        <form action="{% url 'EditarPost' post.UID %}" method="post" id="form-post"  class="form-control my-2 border-2 border-primary rounded" style="width: 50%;">
+            {% csrf_token %}
+            <div class="form-control py-2 my-1">
+                <label for="titulo" class="text-dark">Titulo do Post:</label>
+                <input type="text" id="titulo" name="titulo" value="{{post.titulo}}" class="w-100 p-2 rounded">
+            </div>
+            <div class="form-control py-2 my-1">
+                <label for="resumo" class="text-dark">Resumo do Post:</label>
+                <textarea type="text" id="resumo" name="resumo" class="w-100 p-2 rounded" style="height: 120px; resize: none;">{{post.resumo}}</textarea>
+            </div>
+            <div class="form-control py-2 my-1">
+                <label for="conteudo" class="text-dark">Conteudo do Post [ HTML + bootstrap ]:</label>
+                <textarea class="my-2 form-control rounded" id="conteudo" name="conteudo" cols="30" rows="10" style="width: 100%; min-height: 600px; resize: none;">{{ post.conteudo}}</textarea>
+            </div>
+            <button type="submit" hidden></button>
+        </form>
+        <div class="my-2 container w-50 d-flex flex-column">
+            <div id="btnAtualizar" class="btn btn-warning w-100"><i class="text-dark fs-5 bi bi-arrow-clockwise"> Atualizar</i></div>
+            <div id="visualizacao"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block page_script %}
+<script>
+    const btnSalvar = document.getElementById("btnSalvar");
+    btnSalvar.addEventListener("click",()=>{
+        document.querySelector("#form-post").submit();
+    });
+    const conteudo = document.getElementById("conteudo");
+    const view = document.getElementById("visualizacao");
+    const btn = document.getElementById("btnAtualizar");
+    view.innerHTML = conteudo.value;
+    btn.addEventListener("click", () => {
+        view.innerHTML = conteudo.value;
+    });
+</script>
+{% endblock %}

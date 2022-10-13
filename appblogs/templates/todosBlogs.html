@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block page_head %}
+    <style>
+        .card{
+            transition: .5s !important;
+            position: relative !important;
+        }
+        .card span{
+            display: block;
+            content: '';
+            position: absolute;
+            top:0px;
+            right: 0px;
+            width: 20%;
+            height: 100%;
+            border-radius: 100px 0px 0px 0px;
+            /* background-color: #0d6efd; */
+            transition: .8s;
+        }
+        .card span p{
+            margin: 0 !important;
+            font-size: 0px;
+            transition: .7s;
+        }
+        .card:hover{
+            box-shadow: 0 0 10px #0d6efd;
+        }
+        .card:hover span{
+            width: 50%;
+            border-radius: 0px 0px 0px 100px;
+        }
+        .card:hover span p{
+            font-size: 15px;
+            text-align: center;
+            margin: 0px 10px;
+        }
+    </style>
+{% endblock %}
+{% block page %}
+    <div class="container-fluid bg bg-primary">
+        <div class="container">
+            <h3 class="fs-2 py-5 text-light">Todos os Blogs</h3>
+        </div>
+    </div>
+    <div class="container">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap">
+            {% for b in blogs %}
+                <a href="{% url 'Blog' b.UID %}" class="card text-dark text-decoration-none m-2" style="width: 100%;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ b.nome }}</h5>
+                        <span class="d-flex flex-column align-items-center justify-content-center bg bg-{{b.tema}}">
+                            <div class="d-flex w-100 align-items-center justify-content-center text-light"><i class="bi bi-star-fill mx-1"></i><p>Total de curtidas: </p> <i> {{b.GetQtdLikes}}</i></div>
+                            <div class="d-flex w-100 align-items-center justify-content-center text-light"><i class="bi bi-chat-dots mx-1"></i><p>Total de comentários: </p> <i> {{b.GetQtdComents}}</i></div>
+                        </span>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock %}
+{% block page_script %}
+{% endblock %}
