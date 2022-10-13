@@ -2,3 +2,5 @@
 /__pycache__
 cfg.py
 startserver.bat
+requirements.txt
+Procfile
